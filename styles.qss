@@ -1,47 +1,110 @@
 QMainWindow {
-    background-color: #1e1e1e;
+    background-color: #181a1b;
 }
 
 QWidget {
-    color: #ffffff;
-    background-color: #1e1e1e;
+    color: #f3f3f3;
+    background-color: #181a1b;
+    font-family: 'Segoe UI', 'Arial', sans-serif;
+    font-size: 15px;
 }
 
 QPushButton {
-    background-color: #2d2d2d;
-    border: 1px solid #3d3d3d;
-    padding: 5px 15px;
-    border-radius: 3px;
+    background-color: #23272b;
+    border: 1px solid #343a40;
+    padding: 7px 18px;
+    border-radius: 6px;
+    color: #f3f3f3;
+    font-weight: 500;
 }
 
 QPushButton:hover {
-    background-color: #3d3d3d;
+    background-color: #4a90e2;
+    color: #fff;
+    border: 1px solid #4a90e2;
+}
+
+QPushButton:checked {
+    background-color: #4a90e2;
+    color: #fff;
+    border: 1px solid #4a90e2;
 }
 
 QLineEdit {
-    background-color: #2d2d2d;
-    border: 1px solid #3d3d3d;
-    padding: 5px;
-    border-radius: 3px;
+    background-color: #23272b;
+    border: 1px solid #343a40;
+    padding: 7px;
+    border-radius: 6px;
+    color: #f3f3f3;
+    selection-background-color: #4a90e2;
+    font-size: 15px;
 }
 
-QListWidget {
-    background-color: #2d2d2d;
-    border: 1px solid #3d3d3d;
-    border-radius: 3px;
+QLabel {
+    font-size: 15px;
+}
+
+QScrollArea {
+    border: none;
+    background: transparent;
 }
 
 QScrollBar:vertical {
-    background-color: #2d2d2d;
-    width: 12px;
+    background: #23272b;
+    width: 14px;
+    margin: 0px 0px 0px 0px;
+    border-radius: 7px;
 }
 
 QScrollBar::handle:vertical {
-    background-color: #3d3d3d;
-    min-height: 20px;
-    border-radius: 6px;
+    background: #4a90e2;
+    min-height: 30px;
+    border-radius: 7px;
 }
 
 QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
     height: 0px;
+}
+
+QScrollBar:horizontal {
+    background: #23272b;
+    height: 14px;
+    margin: 0px 0px 0px 0px;
+    border-radius: 7px;
+}
+
+QScrollBar::handle:horizontal {
+    background: #4a90e2;
+    min-width: 30px;
+    border-radius: 7px;
+}
+
+QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
+    width: 0px;
+}
+
+/* Card effect for PDF thumbnails */
+QWidget#PDFCardWidget {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #23272b, stop:1 #202225);
+    border-radius: 12px;
+    border: 1.5px solid #343a40;
+    outline: 1px solid rgba(74,144,226,0.10);
+}
+QWidget#PDFCardWidget:hover {
+    border: 2px solid #4a90e2;
+    outline: 2px solid #4a90e2;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #314d6a, stop:1 #23272b);
+    border-radius: 14px;
+}
+
+QLabel#star_label {
+    color: gold;
+    font-size: 24px;
+    background: transparent;
+    /* No text-shadow in QSS, but bold and color will stand out */
+    font-weight: bold;
+}
+QWidget#PDFCardWidget:hover QLabel#star_label {
+    color: #ffd700;
+    font-size: 28px;
 } 

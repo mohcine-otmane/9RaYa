@@ -1,0 +1,56 @@
+PDF Viewer Application - Python PyQt6 Version
+
+Description:
+This is a modern PDF viewer application built with Python and PyQt6, featuring a dark theme and intuitive folder navigation. The application allows users to browse through folders, view PDF files, and manage their documents with a beautiful user interface.
+
+Key Features:
+1. Dark theme with modern UI design
+2. Folder navigation with breadcrumb trail
+3. PDF preview thumbnails
+4. File sorting and searching
+5. File upload capability
+6. Responsive layout
+
+Technical Requirements:
+- Python 3.8 or higher
+- PyQt6
+- pdf2image (for PDF previews)
+- Pillow (for image handling)
+
+Dependencies:
+```
+PyQt6>=6.4.0
+pdf2image>=1.16.3
+Pillow>=9.3.0
+```
+
+File Structure:
+```
+pdf_viewer/
+├── main.py              # Main application entry point
+├── styles.qss          # Qt Style Sheets for dark theme
+├── ui/
+│   ├── main_window.py  # Main window implementation
+│   ├── pdf_card.py     # PDF card widget
+│   └── folder_view.py  # Folder navigation widget
+├── utils/
+│   ├── pdf_utils.py    # PDF handling utilities
+│   └── file_utils.py   # File system operations
+└── resources/
+    └── icons/          # Application icons
+```
+
+Implementation Notes:
+1. The application uses QSS (Qt Style Sheets) for styling, similar to CSS
+2. PDF previews are generated using pdf2image
+3. File system operations are handled through Python's os and pathlib modules
+4. The UI is built using PyQt6's widget system
+5. The application follows a modular design pattern for better maintainability
+
+To run the application:
+1. Install the required dependencies:
+   pip install -r requirements.txt
+2. Run the main application:
+   python main.py
+
+The application will maintain the same functionality as the PHP version but with a native desktop interface and improved performance. 

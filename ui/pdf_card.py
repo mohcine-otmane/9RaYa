@@ -26,6 +26,7 @@ class PDFCard(QListWidgetItem):
 class PDFCardWidget(QWidget):
     def __init__(self, filename, thumbnail_path=None, full_path=None, is_favorite_mode=False, favorites=None):
         super().__init__()
+        self.setObjectName("PDFCardWidget")
         self.full_path = full_path
         self.filename = filename
         self.is_favorite_mode = is_favorite_mode
@@ -55,6 +56,7 @@ class PDFCardWidget(QWidget):
         thumb_layout.addWidget(self.thumb_label)
 
         self.star_label = QLabel(thumb_container)
+        self.star_label.setObjectName("star_label")
         self.star_label.setText("★")
         self.star_label.setStyleSheet(
             "color: gold; font-size: 24px; background: transparent;"
