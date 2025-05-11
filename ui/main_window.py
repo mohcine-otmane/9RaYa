@@ -11,6 +11,7 @@ import traceback
 import json
 
 CONFIG_PATH = os.path.join(os.path.expanduser("~"), ".pdf_viewer_config")
+FAVORITES_PATH = os.path.join(os.path.expanduser("~"), ".pdf_viewer_favorites.json")
 
 class ThumbnailWorker(QThread):
     finished = pyqtSignal(str, str)
@@ -37,6 +38,8 @@ class MainWindow(QMainWindow):
         self.workers = []
         self.pdf_files = []
         self.thumbnails = {}
+        self.favorites = self.load_favorites()
+        self.showing_favorites = False
         self.setup_ui()
         self.load_styles()
         if not self.current_path:
@@ -63,6 +66,21 @@ class MainWindow(QMainWindow):
                 background-color: #3d3d3d;
             }
         """)
+        self.toggle_btn = QPushButton("Show Favorites")
+        self.toggle_btn.setCheckable(True)
+        self.toggle_btn.clicked.connect(self.toggle_favorites)
+        self.toggle_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #2d2d2d;
+                border: 1px solid #3d3d3d;
+                padding: 5px 15px;
+                border-radius: 3px;
+            }
+            QPushButton:checked {
+                background-color: #4a90e2;
+                color: #fff;
+            }
+        """)
         self.search_input = QLineEdit()
         self.search_input.setPlaceholderText("Search PDFs...")
         self.search_input.textChanged.connect(self.filter_files)
@@ -82,6 +100,7 @@ class MainWindow(QMainWindow):
             }
         """)
         top_bar.addWidget(self.folder_btn)
+        top_bar.addWidget(self.toggle_btn)
         top_bar.addWidget(self.search_input)
         top_bar.addWidget(read_only_label)
         top_bar.addWidget(self.progress_bar)
@@ -117,7 +136,11 @@ class MainWindow(QMainWindow):
             return
         self.clear_grid()
         try:
-            self.pdf_files = sorted(get_pdf_files(self.current_path), key=lambda x: x.lower())
+            if self.showing_favorites:
+                all_files = get_pdf_files(self.current_path)
+                self.pdf_files = sorted([f for f in all_files if os.path.join(self.current_path, f) in self.favorites], key=lambda x: x.lower())
+            else:
+                self.pdf_files = sorted(get_pdf_files(self.current_path), key=lambda x: x.lower())
             if not self.pdf_files:
                 QMessageBox.information(self, "No PDFs Found", 
                     "No PDF files found in the selected folder.")
@@ -175,9 +198,13 @@ class MainWindow(QMainWindow):
         columns = max(1, width // (thumb_width + spacing))
         row = 0
         col = 0
+        is_fav_mode = self.showing_favorites
         for pdf_file in self.pdf_files:
+            full_path = os.path.join(self.current_path, pdf_file)
             thumb = self.thumbnails.get(pdf_file)
-            card = PDFCardWidget(pdf_file, thumb, os.path.join(self.current_path, pdf_file))
+            card = PDFCardWidget(pdf_file, thumb, full_path, is_fav_mode)
+            card.add_to_favorite = self.add_to_favorite_factory(full_path)
+            card.remove_from_favorite = self.remove_from_favorite_factory(full_path)
             self.grid_layout.addWidget(card, row, col)
             col += 1
             if col >= columns:
@@ -191,7 +218,11 @@ class MainWindow(QMainWindow):
 
     def filter_files(self):
         search_text = self.search_input.text().lower()
-        self.pdf_files = sorted([f for f in get_pdf_files(self.current_path) if search_text in f.lower()], key=lambda x: x.lower())
+        if self.showing_favorites:
+            all_files = get_pdf_files(self.current_path)
+            self.pdf_files = sorted([f for f in all_files if os.path.join(self.current_path, f) in self.favorites and search_text in f.lower()], key=lambda x: x.lower())
+        else:
+            self.pdf_files = sorted([f for f in get_pdf_files(self.current_path) if search_text in f.lower()], key=lambda x: x.lower())
         self.display_grid()
 
     def save_last_folder(self, folder):
@@ -209,4 +240,44 @@ class MainWindow(QMainWindow):
                     return data.get("last_folder")
         except Exception as e:
             print(f"Failed to load config: {e}")
-        return None 
+        return None
+
+    def load_favorites(self):
+        try:
+            if os.path.exists(FAVORITES_PATH):
+                with open(FAVORITES_PATH, "r") as f:
+                    return set(json.load(f))
+        except Exception as e:
+            print(f"Failed to load favorites: {e}")
+        return set()
+
+    def save_favorites(self):
+        try:
+            with open(FAVORITES_PATH, "w") as f:
+                json.dump(list(self.favorites), f)
+        except Exception as e:
+            print(f"Failed to save favorites: {e}")
+
+    def add_to_favorite_factory(self, full_path):
+        def add_to_favorite():
+            self.favorites.add(full_path)
+            self.save_favorites()
+            QMessageBox.information(self, "Favorite", f"Added to favorites: {os.path.basename(full_path)}")
+        return add_to_favorite
+
+    def remove_from_favorite_factory(self, full_path):
+        def remove_from_favorite():
+            if full_path in self.favorites:
+                self.favorites.remove(full_path)
+                self.save_favorites()
+                QMessageBox.information(self, "Favorite", f"Removed from favorites: {os.path.basename(full_path)}")
+                self.load_files()
+        return remove_from_favorite
+
+    def toggle_favorites(self):
+        self.showing_favorites = self.toggle_btn.isChecked()
+        if self.showing_favorites:
+            self.toggle_btn.setText("Show All")
+        else:
+            self.toggle_btn.setText("Show Favorites")
+        self.load_files() 

@@ -24,10 +24,13 @@ class PDFCard(QListWidgetItem):
             print(f"Failed to load thumbnail for {self.filename} - File not found: {thumbnail_path}")
 
 class PDFCardWidget(QWidget):
-    def __init__(self, filename, thumbnail_path=None, full_path=None):
+    def __init__(self, filename, thumbnail_path=None, full_path=None, is_favorite_mode=False):
         super().__init__()
         self.full_path = full_path
         self.filename = filename
+        self.is_favorite_mode = is_favorite_mode
+        self.add_to_favorite = None
+        self.remove_from_favorite = None
         layout = QVBoxLayout(self)
         layout.setContentsMargins(4, 4, 4, 4)
         layout.setSpacing(6)
@@ -65,19 +68,21 @@ class PDFCardWidget(QWidget):
             print(f"Failed to load thumbnail for {self.filename} - File not found: {thumbnail_path}")
 
     def mousePressEvent(self, event):
-        if event.button() == Qt.MouseButton.LeftButton:
-            if self.full_path and os.path.exists(self.full_path):
-                QDesktopServices.openUrl(QUrl.fromLocalFile(self.full_path))
+        # Do not open on left click anymore
         super().mousePressEvent(event)
 
     def contextMenuEvent(self, event):
         menu = QMenu(self)
         open_action = QAction("Open", self)
-        favorite_action = QAction("Add to favorite...", self)
+        if self.is_favorite_mode:
+            fav_action = QAction("Remove from favorite", self)
+            fav_action.triggered.connect(self.remove_from_favorite or (lambda: None))
+        else:
+            fav_action = QAction("Add to favorite...", self)
+            fav_action.triggered.connect(self.add_to_favorite or (lambda: None))
         menu.addAction(open_action)
-        menu.addAction(favorite_action)
+        menu.addAction(fav_action)
         open_action.triggered.connect(self.open_pdf)
-        favorite_action.triggered.connect(self.add_to_favorite)
         menu.exec(event.globalPos())
 
     def open_pdf(self):
