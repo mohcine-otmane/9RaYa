@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QListWidgetItem
+from PyQt6.QtWidgets import QListWidgetItem, QWidget, QVBoxLayout, QLabel
 from PyQt6.QtGui import QPixmap, QIcon
 from PyQt6.QtCore import Qt
 import os
@@ -18,6 +18,41 @@ class PDFCard(QListWidgetItem):
             pixmap = QPixmap(thumbnail_path)
             if not pixmap.isNull():
                 self.setIcon(QIcon(pixmap))
+            else:
+                print(f"Failed to load thumbnail for {self.filename} - Invalid image file")
+        else:
+            print(f"Failed to load thumbnail for {self.filename} - File not found: {thumbnail_path}")
+
+class PDFCardWidget(QWidget):
+    def __init__(self, filename, thumbnail_path=None):
+        super().__init__()
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(4, 4, 4, 4)
+        layout.setSpacing(6)
+        self.thumb_label = QLabel()
+        self.thumb_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.thumb_label.setFixedSize(150, 200)
+        if thumbnail_path and os.path.exists(thumbnail_path):
+            pixmap = QPixmap(thumbnail_path)
+            if not pixmap.isNull():
+                self.thumb_label.setPixmap(
+                    pixmap.scaled(150, 200, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+                )
+        layout.addWidget(self.thumb_label)
+        self.text_label = QLabel(filename)
+        self.text_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.text_label.setWordWrap(True)
+        self.text_label.setStyleSheet("font-size: 12px;")
+        layout.addWidget(self.text_label)
+        self.setLayout(layout)
+
+    def set_thumbnail(self, thumbnail_path):
+        if os.path.exists(thumbnail_path):
+            pixmap = QPixmap(thumbnail_path)
+            if not pixmap.isNull():
+                self.thumb_label.setPixmap(
+                    pixmap.scaled(150, 200, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+                )
             else:
                 print(f"Failed to load thumbnail for {self.filename} - Invalid image file")
         else:
