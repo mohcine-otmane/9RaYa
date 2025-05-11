@@ -117,7 +117,7 @@ class MainWindow(QMainWindow):
             return
         self.clear_grid()
         try:
-            self.pdf_files = get_pdf_files(self.current_path)
+            self.pdf_files = sorted(get_pdf_files(self.current_path), key=lambda x: x.lower())
             if not self.pdf_files:
                 QMessageBox.information(self, "No PDFs Found", 
                     "No PDF files found in the selected folder.")
@@ -177,7 +177,7 @@ class MainWindow(QMainWindow):
         col = 0
         for pdf_file in self.pdf_files:
             thumb = self.thumbnails.get(pdf_file)
-            card = PDFCardWidget(pdf_file, thumb)
+            card = PDFCardWidget(pdf_file, thumb, os.path.join(self.current_path, pdf_file))
             self.grid_layout.addWidget(card, row, col)
             col += 1
             if col >= columns:
@@ -191,7 +191,7 @@ class MainWindow(QMainWindow):
 
     def filter_files(self):
         search_text = self.search_input.text().lower()
-        self.pdf_files = [f for f in get_pdf_files(self.current_path) if search_text in f.lower()]
+        self.pdf_files = sorted([f for f in get_pdf_files(self.current_path) if search_text in f.lower()], key=lambda x: x.lower())
         self.display_grid()
 
     def save_last_folder(self, folder):
