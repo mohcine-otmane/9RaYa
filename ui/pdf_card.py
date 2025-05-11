@@ -1,5 +1,5 @@
 from PyQt6.QtWidgets import QListWidgetItem, QWidget, QVBoxLayout, QLabel
-from PyQt6.QtGui import QPixmap, QIcon
+from PyQt6.QtGui import QPixmap, QIcon, QFontMetrics
 from PyQt6.QtCore import Qt
 import os
 
@@ -39,10 +39,14 @@ class PDFCardWidget(QWidget):
                     pixmap.scaled(150, 200, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
                 )
         layout.addWidget(self.thumb_label)
-        self.text_label = QLabel(filename)
+        self.text_label = QLabel()
         self.text_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.text_label.setWordWrap(True)
+        self.text_label.setWordWrap(False)
+        self.text_label.setFixedWidth(150)
         self.text_label.setStyleSheet("font-size: 12px;")
+        metrics = QFontMetrics(self.text_label.font())
+        elided = metrics.elidedText(filename, Qt.TextElideMode.ElideRight, 150)
+        self.text_label.setText(elided)
         layout.addWidget(self.text_label)
         self.setLayout(layout)
 
