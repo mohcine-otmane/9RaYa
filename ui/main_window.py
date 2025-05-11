@@ -202,7 +202,7 @@ class MainWindow(QMainWindow):
         for pdf_file in self.pdf_files:
             full_path = os.path.join(self.current_path, pdf_file)
             thumb = self.thumbnails.get(pdf_file)
-            card = PDFCardWidget(pdf_file, thumb, full_path, is_fav_mode)
+            card = PDFCardWidget(pdf_file, thumb, full_path, is_fav_mode, self.favorites)
             card.add_to_favorite = self.add_to_favorite_factory(full_path)
             card.remove_from_favorite = self.remove_from_favorite_factory(full_path)
             self.grid_layout.addWidget(card, row, col)
@@ -263,6 +263,7 @@ class MainWindow(QMainWindow):
             self.favorites.add(full_path)
             self.save_favorites()
             QMessageBox.information(self, "Favorite", f"Added to favorites: {os.path.basename(full_path)}")
+            self.load_files()
         return add_to_favorite
 
     def remove_from_favorite_factory(self, full_path):

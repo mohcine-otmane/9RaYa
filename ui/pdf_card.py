@@ -24,16 +24,25 @@ class PDFCard(QListWidgetItem):
             print(f"Failed to load thumbnail for {self.filename} - File not found: {thumbnail_path}")
 
 class PDFCardWidget(QWidget):
-    def __init__(self, filename, thumbnail_path=None, full_path=None, is_favorite_mode=False):
+    def __init__(self, filename, thumbnail_path=None, full_path=None, is_favorite_mode=False, favorites=None):
         super().__init__()
         self.full_path = full_path
         self.filename = filename
         self.is_favorite_mode = is_favorite_mode
         self.add_to_favorite = None
         self.remove_from_favorite = None
+
         layout = QVBoxLayout(self)
         layout.setContentsMargins(4, 4, 4, 4)
         layout.setSpacing(6)
+
+        thumb_container = QWidget()
+        thumb_container.setFixedSize(150, 200)
+        thumb_container.setStyleSheet("background: transparent;")
+        thumb_layout = QVBoxLayout(thumb_container)
+        thumb_layout.setContentsMargins(0, 0, 0, 0)
+        thumb_layout.setSpacing(0)
+
         self.thumb_label = QLabel()
         self.thumb_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.thumb_label.setFixedSize(150, 200)
@@ -43,7 +52,19 @@ class PDFCardWidget(QWidget):
                 self.thumb_label.setPixmap(
                     pixmap.scaled(150, 200, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
                 )
-        layout.addWidget(self.thumb_label)
+        thumb_layout.addWidget(self.thumb_label)
+
+        self.star_label = QLabel(thumb_container)
+        self.star_label.setText("★")
+        self.star_label.setStyleSheet(
+            "color: gold; font-size: 24px; background: transparent;"
+        )
+        self.star_label.setFixedSize(28, 28)
+        self.star_label.move(120, 0)
+        self.star_label.setVisible((not is_favorite_mode) and favorites and full_path in favorites)
+
+        layout.addWidget(thumb_container)
+
         self.text_label = QLabel()
         self.text_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.text_label.setWordWrap(False)
