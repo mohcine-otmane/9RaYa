@@ -13,6 +13,11 @@ import json
 CONFIG_PATH = os.path.join(os.path.expanduser("~"), ".pdf_viewer_config")
 FAVORITES_PATH = os.path.join(os.path.expanduser("~"), ".pdf_viewer_favorites.json")
 
+def resource_path(relative_path):
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
+
 class ThumbnailWorker(QThread):
     finished = pyqtSignal(str, str)
     error = pyqtSignal(str, str)
@@ -116,7 +121,7 @@ class MainWindow(QMainWindow):
         self.central_layout = layout
 
     def load_styles(self):
-        with open("styles.qss", "r") as f:
+        with open(resource_path("styles.qss"), "r") as f:
             self.setStyleSheet(f.read())
 
     def select_folder(self):

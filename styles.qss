@@ -1,45 +1,48 @@
-QMainWindow {
-    background-color: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #181a1b, stop:1 #23272b);
-}
-
-QWidget {
-    color: #f3f3f3;
-    background-color: transparent;
-    font-family: 'Segoe UI', 'Arial', sans-serif;
-    font-size: 15px;
+QMainWindow, QWidget {
+    background-color: #181a1b;
+    background-image: url("pattern.png");
+    background-repeat: repeat;
+    background-position: center;
 }
 
 QPushButton {
     background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #23272b, stop:1 #4a90e2);
     border: 1.5px solid #343a40;
-    padding: 8px 22px;
-    border-radius: 8px;
+    padding: 10px 26px;
+    border-radius: 10px;
     color: #f3f3f3;
     font-weight: 600;
     letter-spacing: 0.5px;
+    outline: none;
 }
 
-QPushButton:hover {
+QPushButton:hover, QPushButton:focus {
     background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #4a90e2, stop:1 #23272b);
     color: #fff;
-    border: 1.5px solid #4a90e2;
+    border: 2px solid #4a90e2;
+    box-shadow: 0 0 0 3px rgba(74,144,226,0.18);
 }
 
 QPushButton:checked {
     background: #4a90e2;
     color: #fff;
-    border: 1.5px solid #4a90e2;
+    border: 2px solid #4a90e2;
 }
 
 QLineEdit {
-    background: rgba(35,39,43,0.85);
-    border: 1.5px solid #4a90e2;
-    padding: 8px;
-    border-radius: 8px;
+    background: rgba(35,39,43,0.92);
+    border: 2px solid #4a90e2;
+    padding: 10px;
+    border-radius: 10px;
     color: #f3f3f3;
     selection-background-color: #4a90e2;
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 500;
+    outline: none;
+}
+QLineEdit:focus {
+    border: 2.5px solid #4a90e2;
+    background: rgba(74,144,226,0.10);
 }
 
 QLabel {
@@ -88,16 +91,17 @@ QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
 /* Glassy, modern card effect for PDF thumbnails */
 QWidget#PDFCardWidget {
     background: rgba(35, 39, 43, 0.85);
-    border-radius: 18px;
+    border-radius: 20px;
     border: 2px solid #343a40;
     outline: 1.5px solid rgba(74,144,226,0.13);
     /* Simulate glass effect with border and background transparency */
+    transition: border 0.2s, background 0.2s;
 }
 QWidget#PDFCardWidget:hover {
     border: 2.5px solid #4a90e2;
     outline: 2px solid #4a90e2;
-    background: rgba(74,144,226,0.13);
-    border-radius: 22px;
+    background: rgba(74,144,226,0.18);
+    border-radius: 24px;
 }
 
 QLabel#star_label {
